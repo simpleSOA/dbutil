@@ -14,7 +14,6 @@ import java.util.ResourceBundle;
  * Date: 2016/1/15 Time: 13:28
  */
 public class DataBaseDataSource {
-    private final static ThreadLocal<Connection> CONNS = new ThreadLocal<>();
 
     private static DataSource dataSource;
     static {
@@ -32,26 +31,6 @@ public class DataBaseDataSource {
 
     public static final Connection getConnection() throws SQLException {
         Connection connection = dataSource.getConnection();
-        if (connection == null || connection.isClosed()){
-            connection = dataSource.getConnection();
-            CONNS.set(connection);
-        }
         return connection;
-    }
-    public final static void closeConnection() {
-        Connection conn = CONNS.get();
-        try {
-            if(conn != null && !conn.isClosed()){
-                conn.setAutoCommit(true);
-                conn.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        CONNS.set(null);
-    }
-
-    public static DataSource getDataSource() {
-        return dataSource;
     }
 }
